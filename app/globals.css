@@ -1,0 +1,348 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────── База ─────────────────────────── */
+@layer base {
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--color-bg); color-scheme: dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    min-width: 280px; margin: 0; color: var(--color-text);
+    font-family: var(--font-ui); font-size: var(--text-base); line-height: 1.55;
+    -webkit-font-smoothing: antialiased; overflow-x: clip;
+  }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.15; margin: 0; text-wrap: balance; }
+  p { margin: 0; text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: var(--radius-sm); }
+  ::selection { background: var(--color-accent); color: var(--color-on-accent); }
+  button { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  img, svg { display: block; max-width: 100%; }
+}
+
+@layer components {
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .nowrap { white-space: nowrap; }
+  .skip-link {
+    position: absolute; left: var(--space-4); top: var(--space-4); z-index: 50;
+    padding: var(--space-3) var(--space-4); border-radius: var(--radius-pill);
+    background: var(--button-bg); color: var(--button-fg); text-decoration: none;
+    transform: translateY(-200%); transition: transform var(--dur-base) var(--ease-out);
+  }
+  .skip-link:focus-visible { transform: none; }
+
+  /* ─────────────── Космос: закреплённый фон в несколько слоёв ─────────────── */
+  .sky { position: fixed; inset: 0; height: 100lvh; z-index: -1; overflow: hidden; pointer-events: none; background: var(--sky-gradient); --px: 0; --py: 0; }
+  .sky-far, .sky-near { position: absolute; inset: 0; transition: transform 1.2s var(--ease-out); }
+  /* лёгкий параллакс за курсором: дальний слой смещается меньше ближнего */
+  .sky-far  { transform: translate3d(calc(var(--px) * -8px), calc(var(--py) * -8px), 0); }
+  .sky-near { transform: translate3d(calc(var(--px) * -18px), calc(var(--py) * -18px), 0); }
+  .sky-milky {
+    position: absolute; inset: -6% -3%; background: url('/sky/milky-way-portrait.webp') center / cover no-repeat;
+    animation: milky-breathe 14s ease-in-out infinite alternate;
+  }
+  @media (orientation: landscape) { .sky-milky { background-image: url('/sky/milky-way-landscape.webp'); } }
+  @keyframes milky-breathe { from { opacity: 0.82; } to { opacity: 1; } }
+
+  /* небо медленно вращается, как в Star Walk: полный оборот за 10 минут */
+  .sky-rotor {
+    position: absolute; left: 50%; top: 50%; width: 170vmax; height: 170vmax; margin: -85vmax 0 0 -85vmax;
+    animation: sky-rotate 600s linear infinite;
+    background-image:
+      radial-gradient(circle at 23px 41px, var(--color-star) 0.9px, transparent 1.6px),
+      radial-gradient(circle at 141px 17px, var(--color-star-warm) 0.8px, transparent 1.5px),
+      radial-gradient(circle at 112px 133px, var(--color-star) 1px, transparent 1.7px),
+      radial-gradient(circle at 57px 102px, var(--color-line) 0.8px, transparent 1.5px),
+      radial-gradient(circle at 160px 78px, var(--color-star) 0.6px, transparent 1.2px),
+      radial-gradient(circle at 51px 219px, var(--color-star) 1.3px, transparent 2.1px),
+      radial-gradient(circle at 262px 61px, var(--color-line) 1.2px, transparent 2px),
+      radial-gradient(circle at 297px 201px, var(--color-star-warm) 1.1px, transparent 1.9px),
+      radial-gradient(circle at 166px 252px, var(--color-star) 1.4px, transparent 2.2px);
+    background-size: 181px 157px, 181px 157px, 181px 157px, 181px 157px, 181px 157px, 331px 277px, 331px 277px, 331px 277px, 331px 277px;
+    opacity: 0.85;
+  }
+  @keyframes sky-rotate { to { transform: rotate(360deg); } }
+  .sky-stars-2 {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 97px 74px, var(--color-star) 1.6px, transparent 2.8px),
+      radial-gradient(circle at 433px 301px, var(--color-line) 1.8px, transparent 3px),
+      radial-gradient(circle at 260px 400px, var(--color-star-warm) 1.5px, transparent 2.7px);
+    background-size: 523px 431px, 523px 431px, 523px 431px;
+    animation: twinkle 4.5s ease-in-out infinite alternate;
+  }
+  /* яркие звёзды с лучами — мерцают вразнобой */
+  .glint {
+    position: absolute; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%;
+    background: var(--color-star);
+    box-shadow: 0 0 6px 2px var(--star-glow), 0 0 18px 6px color-mix(in srgb, var(--star-300) 30%, transparent);
+    animation: twinkle var(--tw, 3.4s) ease-in-out var(--tw-delay, 0s) infinite alternate;
+  }
+  .glint::before, .glint::after {
+    content: ""; position: absolute; left: 50%; top: 50%; width: 32px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-star), transparent); transform: translate(-50%, -50%);
+  }
+  .glint::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .glint--warm { background: var(--color-star-warm); box-shadow: 0 0 6px 2px var(--star-glow-warm), 0 0 18px 6px color-mix(in srgb, var(--gold-300) 25%, transparent); }
+  @keyframes twinkle { from { opacity: 0.3; } to { opacity: 1; } }
+
+  /* падающие звёзды: вспыхивают на ~7% цикла, остальное время невидимы — появляются изредка */
+  .meteor {
+    position: absolute; left: var(--x); top: var(--y); width: clamp(110px, 16vmax, 220px); height: 2px; border-radius: 999px;
+    background: linear-gradient(90deg, var(--color-star), color-mix(in srgb, var(--star-300) 45%, transparent) 30%, transparent);
+    opacity: 0; transform: rotate(var(--angle)) translateX(0);
+    animation: meteor var(--dur) linear var(--delay) infinite;
+  }
+  .meteor::before {
+    content: ""; position: absolute; left: 0; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%;
+    background: var(--color-star); box-shadow: 0 0 10px 3px var(--star-glow);
+  }
+  @keyframes meteor {
+    0%   { opacity: 0; transform: rotate(var(--angle)) translateX(0); }
+    1%   { opacity: 1; }
+    6%   { opacity: 0; transform: rotate(var(--angle)) translateX(-55vmax); }
+    100% { opacity: 0; transform: rotate(var(--angle)) translateX(-55vmax); }
+  }
+
+  /* ─────────────── Общие секции (всё по центру) ─────────────── */
+  .section { position: relative; padding: clamp(3.5rem, 8vw, 6rem) clamp(1rem, 5vw, 4rem); text-align: center; }
+  .container { width: 100%; max-width: 70rem; margin: 0 auto; }
+  .section-divider { height: 1px; max-width: 70rem; margin: 0 auto; background: var(--hairline); }
+  .eyebrow { font-size: var(--text-base); color: var(--color-text-soft); }
+  .section-title { font-size: var(--text-2xl); margin-top: var(--space-1); text-align: center; }
+
+  /* ─────────────── Первый экран ─────────────── */
+  .hero {
+    min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: clamp(0.5rem, 2vh, 1.25rem); padding: clamp(1.5rem, 4vh, 3rem) 1rem clamp(2rem, 5vh, 3rem); text-align: center;
+  }
+  .hero-stage { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  /* имена вместе над фото; переносится только после «Дмитрий» (между «и» и «Марина» — неразрывный пробел) */
+  .names {
+    margin: 0; max-width: 100%; text-align: center; position: relative; z-index: 1;
+    font-family: var(--font-display); font-weight: 400; line-height: 1.15; font-size: var(--name-size); color: var(--color-text);
+  }
+  .name { display: inline-block; white-space: nowrap; padding-inline: 0.12em; }
+  .name-letter { display: inline-block; }
+  .names-amp { display: inline-block; font-size: 0.6em; color: var(--color-text-soft); }
+  .heart-inline {
+    display: inline-block; width: 1.05em; height: 1.05em; vertical-align: -0.16em; color: var(--color-heart);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--heart-600) 70%, transparent)); animation: heartbeat 2.4s ease-in-out infinite;
+  }
+  .chart-wrap { position: relative; width: var(--chart-size); aspect-ratio: 1; }
+  .chart-svg { width: 100%; height: 100%; overflow: visible; }
+  /* фото занимает половину диаметра карты; центр — через inset + margin: auto (не через transform, его перезаписывает Motion) */
+  .chart-photo {
+    position: absolute; inset: 0; margin: auto; width: 50%; height: 50%; border-radius: 50%; overflow: hidden;
+    background: var(--moon-bg); border: 2px solid color-mix(in srgb, var(--frost-50) 70%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--frost-50) 8%, transparent), 0 0 40px 6px var(--star-glow);
+  }
+  .chart-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-lead { font-size: var(--text-lg); color: var(--color-text); }
+  .hero-sub { max-width: 34rem; font-size: var(--text-lg); line-height: 1.45; color: var(--color-text-soft); }
+
+  /* ─────────────── Когда и где ─────────────── */
+  .details-list { display: grid; grid-template-columns: minmax(0, 1fr); margin: var(--space-8) 0 0; }
+  .detail {
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-4);
+    padding: var(--space-8) 0; border-top: 1px solid var(--hairline); min-width: 0;
+  }
+  .detail:first-child { border-top: 0; padding-top: var(--space-2); }
+  .detail-label { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.1; color: var(--color-text); }
+  .detail-value { margin: 0; font-size: var(--text-lg); line-height: 1.3; overflow-wrap: anywhere; }
+  .detail-sub { margin: 0; color: var(--color-text-soft); }
+  /* dd растягиваем на ширину колонки, иначе проценты ширины считаются от SVG (300 px) и блок уезжает влево */
+  .detail > dd:not(.house-photo) { width: 100%; }
+  .calendar, .clock, .house-photo { margin-inline: auto; }
+  @media (min-width: 1024px) {
+    .details-list { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+    .detail { border-top: 0; border-left: 1px solid var(--hairline); padding: var(--space-2) var(--space-6); }
+    .detail:first-child { border-left: 0; }
+  }
+
+  /* календарь */
+  .calendar {
+    width: min(100%, 20rem); padding: var(--space-4) var(--space-3) var(--space-3); border-radius: var(--radius-lg);
+    background: var(--panel-bg); border: 1px solid var(--panel-border); box-shadow: var(--shadow-panel);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  }
+  .cal-month { font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.1; }
+  .cal-year { font-size: var(--text-sm); color: var(--color-text-soft); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.15rem; margin-top: var(--space-3); }
+  .cal-wd { font-size: 0.95rem; color: var(--color-text-soft); padding-bottom: var(--space-1); }
+  .cal-day { position: relative; aspect-ratio: 1; display: grid; place-items: center; font-size: var(--text-sm); color: var(--color-text); }
+  .cal-day--weekend { color: var(--color-accent); }
+  .cal-heart-svg {
+    position: absolute; inset: -22%; width: 144%; height: 144%; max-width: none; color: var(--color-heart);
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--heart-600) 70%, transparent));
+    animation: heartbeat 2.4s ease-in-out infinite;
+  }
+  .cal-heart-num { position: relative; z-index: 1; color: var(--color-on-heart); font-size: var(--text-base); line-height: 1; }
+  @keyframes heartbeat { 0%, 40%, 100% { transform: scale(1); } 15% { transform: scale(1.12); } 28% { transform: scale(1.04); } }
+
+  /* место под фото дома — арка, как окно */
+  /* рамка повторяет пропорции фото дома (1200×716), поэтому снимок не обрезается */
+  .house-photo {
+    width: min(100%, 24rem); aspect-ratio: 1200 / 716; border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--frost-50) 7%, transparent), var(--shadow-panel);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-2);
+    background: var(--panel-bg); border: 1px solid var(--hairline-strong); color: var(--color-text-soft); font-size: var(--text-sm);
+  }
+  .house-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .map-link {
+    display: inline-flex; align-items: center; gap: var(--space-2); min-height: 2.75rem; padding: 0 var(--space-4);
+    border-radius: var(--radius-pill); border: 1px solid var(--chip-border); color: var(--color-accent); text-decoration: none;
+    transition: border-color var(--dur-base) var(--ease-out);
+  }
+  .map-link:hover { border-color: var(--color-accent); }
+
+  /* небесные часы */
+  .clock { width: min(100%, 16rem); aspect-ratio: 1; }
+  .clock svg { width: 100%; height: 100%; }
+  .clock-face { fill: var(--panel-bg); stroke: var(--hairline-strong); stroke-width: 1; }
+  .clock-ring { fill: none; stroke: var(--color-text-soft); stroke-opacity: 0.45; }
+  .clock-ticks { fill: none; stroke: var(--color-text-soft); stroke-opacity: 0.6; }
+  .clock-num { fill: var(--color-text); font-family: var(--font-display); font-size: 26px; text-anchor: middle; dominant-baseline: central; }
+  .clock-star { fill: var(--color-accent); }
+  .clock-inner { fill: none; stroke: var(--color-line); stroke-opacity: 0.35; stroke-dasharray: 2 5; }
+  .clock-window { fill: var(--space-950); stroke: var(--hairline-strong); }
+  .clock-digital { fill: var(--color-accent); font-family: var(--font-ui); font-size: 15px; text-anchor: middle; dominant-baseline: central; }
+  .clock-hand-hour { fill: var(--color-accent); }
+  .clock-hand-min { fill: var(--color-text); }
+  .clock-jewel { fill: var(--color-accent); stroke: var(--space-950); stroke-width: 1.5; }
+
+  /* ─────────────── Ответ гостя (по центру) ─────────────── */
+  .rsvp-layout { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); text-align: center; }
+  .rsvp-intro { max-width: 34rem; }
+  .rsvp-lead { margin-top: var(--space-4); color: var(--color-text-soft); }
+  .rsvp-lead--next { margin-top: var(--space-2); }
+  .panel {
+    width: min(100%, 38rem); min-width: 0; padding: clamp(1.25rem, 4vw, 3rem); border-radius: var(--panel-radius);
+    background: var(--panel-bg); border: 1px solid var(--panel-border); box-shadow: var(--shadow-panel);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  }
+  .form { display: flex; flex-direction: column; gap: var(--space-8); }
+  .field-group { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; text-align: center; }
+  .label { font-size: var(--text-base); color: var(--color-text); }
+  .label-hint { color: var(--color-text-soft); margin-left: var(--space-2); }
+  .field {
+    width: 100%; min-height: 3.25rem; padding: var(--space-3) var(--space-4); text-align: center;
+    background: var(--input-bg); border: 1px solid var(--input-border); border-radius: var(--radius-md);
+    font-family: var(--font-ui); font-size: max(16px, var(--text-base)); color: var(--color-text);
+    transition: border-color var(--dur-base) var(--ease-out); appearance: none;
+  }
+  textarea.field { min-height: 8rem; resize: vertical; line-height: 1.5; text-align: left; }
+  .field::placeholder { color: var(--color-text-soft); opacity: 0.7; }
+  .field:focus { outline: none; border-color: var(--input-border-focus); }
+  .field:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+  .field[aria-invalid='true'] { border-color: var(--color-danger); }
+  fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+  legend { padding: 0; margin-bottom: var(--space-3); width: 100%; text-align: center; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); }
+  .chip {
+    display: inline-flex; align-items: center; gap: var(--space-2); min-height: 2.75rem; padding: 0 var(--space-4);
+    border-radius: var(--radius-pill); border: 1px solid var(--chip-border); background: var(--chip-bg);
+    color: var(--color-text); font-size: max(16px, var(--text-sm));
+    transition: background-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+  }
+  .chip:hover { border-color: var(--color-text); }
+  .chip[aria-pressed='true'] { background: var(--chip-bg-selected); color: var(--chip-fg-selected); border-color: var(--chip-bg-selected); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    min-height: 3.25rem; padding: var(--space-3) var(--space-8); border-radius: var(--radius-pill);
+    background: var(--button-bg); color: var(--button-fg); font-size: var(--text-lg); text-decoration: none;
+    transition: background-color var(--dur-base) var(--ease-out);
+  }
+  .btn:hover { background: var(--button-bg-hover); }
+  .btn:disabled { opacity: 0.6; }
+  .btn-block { width: 100%; }
+  .btn-quiet {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 2.75rem;
+    padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill);
+    border: 1px solid var(--chip-border); background: var(--chip-bg); color: var(--color-text); font-size: var(--text-sm);
+  }
+  .btn-quiet:hover { border-color: var(--color-text); }
+  .error-text { display: flex; gap: var(--space-2); align-items: center; justify-content: center; color: var(--color-danger); font-size: var(--text-sm); }
+  .alert { display: flex; gap: var(--space-3); align-items: flex-start; justify-content: center; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border: 1px solid var(--color-danger); color: var(--color-danger); font-size: var(--text-sm); }
+  .success { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding: var(--space-6) 0; }
+  .success-title { font-family: var(--font-display); font-size: var(--text-2xl); line-height: 1.1; }
+  .success p { color: var(--color-text-soft); }
+
+  .footer { padding: var(--space-12) 1rem var(--space-16); text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+  .footer p { font-family: var(--font-display); font-size: var(--text-xl); color: var(--color-text-soft); }
+  .footer svg { color: var(--color-line); }
+
+  /* ─────────────── Карта неба (SVG) ─────────────── */
+  .chart-grid { fill: none; stroke: var(--color-text-soft); stroke-opacity: 0.45; stroke-width: 1.4; }
+  .chart-grid--soft { stroke-opacity: 0.3; }
+  .chart-grid--dash { stroke-opacity: 0.22; stroke-dasharray: 2 7; }
+  .chart-tick { fill: none; stroke: var(--color-text-soft); stroke-opacity: 0.5; }
+  .chart-tick--big { stroke-opacity: 0.75; }
+  .chart-meridian { stroke: var(--color-text-soft); stroke-opacity: 0.12; stroke-width: 1.4; }
+  .chart-ecliptic { fill: none; stroke: var(--color-accent); stroke-opacity: 0.35; stroke-width: 1.4; stroke-dasharray: 6 6; }
+  .chart-ring-text { fill: var(--color-text-soft); font-family: var(--font-ui); font-size: 17px; letter-spacing: 2px; text-anchor: middle; }
+  .chart-line { stroke: var(--color-line); stroke-width: 2.6; stroke-linecap: round; }
+  .chart-line--dash { stroke-dasharray: 4 6; }
+  .chart-star { fill: var(--color-star); stroke: var(--color-line); stroke-width: 1.4; }
+  .chart-star-glow { fill: var(--color-star); opacity: 0.55; }
+  .chart-star--warm { fill: var(--color-star-warm); }
+  .chart-star-glow--warm { fill: var(--color-accent); }
+  .chart-moon-halo { fill: none; stroke: var(--color-star); stroke-opacity: 0.8; stroke-width: 1.6; }
+  .chart-ring, .chart-star-g { transform-box: fill-box; transform-origin: center; }
+  @media (min-width: 1024px) { .chart-line { stroke-width: 1.8; } .chart-grid, .chart-meridian { stroke-width: 1; } }
+
+  /* служебные страницы */
+  .status-page { min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-4); padding: 2rem 1rem; text-align: center; }
+  .status-title { font-size: var(--text-2xl); font-style: italic; }
+  .status-text { color: var(--color-text-soft); max-width: 28rem; margin-bottom: var(--space-4); }
+  .btn { text-decoration: none; }
+
+  /* админка */
+  .admin-login { min-height: 100svh; display: grid; place-items: center; padding: 1.5rem 1rem; }
+  .admin-login-panel { width: 100%; max-width: 26rem; display: flex; flex-direction: column; gap: var(--space-6); }
+  .admin { max-width: 70rem; margin: 0 auto; padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2rem) 4rem; display: flex; flex-direction: column; gap: var(--space-6); }
+  .admin-top, .admin-list-head { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; justify-content: space-between; }
+  .admin-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+  .admin-actions--stack { margin-top: var(--space-4); }
+  .admin-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  @media (min-width: 768px) { .admin-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); } }
+  .admin-total { font-family: var(--font-display); font-size: clamp(3rem, 8vw, 4.5rem); line-height: 1; margin-top: var(--space-2); }
+  .admin-muted { color: var(--color-text-soft); font-size: var(--text-sm); }
+  .admin-bars { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .admin-bar-head { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--text-sm); }
+  .admin-bar { height: 6px; border-radius: var(--radius-pill); background: var(--hairline); overflow: hidden; margin-top: var(--space-1); }
+  .admin-bar span { display: block; height: 100%; background: var(--color-accent); border-radius: inherit; }
+  .admin-search { min-height: 2.75rem; width: min(100%, 16rem); }
+  .admin-entries { list-style: none; margin: var(--space-4) 0 0; padding: 0; }
+  .admin-entry { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-4) 0; border-top: 1px solid var(--hairline); }
+  .admin-check { width: 1.25rem; height: 1.25rem; margin-top: 0.2rem; accent-color: var(--color-accent); flex-shrink: 0; }
+  .admin-entry-body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; cursor: pointer; overflow-wrap: anywhere; }
+  .admin-entry-name { font-weight: 600; }
+  .btn-danger { border-color: var(--color-danger); color: var(--color-danger); }
+}
+
+/* «Уменьшить движение»: мягкое проявление по прозрачности — без сдвигов, размытия и вращения; космос неподвижен */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  [data-reveal] { transform: none !important; filter: none !important; }
+  .clock-sweep { transform: none !important; }
+  /* линии созвездий сразу целиком: без этого остаётся штрих нулевой длины от анимации прорисовки */
+  .chart-line:not(.chart-line--dash) { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
+  .sky-rotor, .sky-milky, .sky-stars-2, .glint, .cal-heart-svg, .heart-inline { animation: none !important; }
+  .meteor { display: none !important; }
+  .sky-far, .sky-near { transform: none !important; }
+}
+
+/*
+ * Страховка: если JavaScript не выполнился или упал, через 3,5 с контент проявится сам.
+ * CSS-анимация сильнее инлайн-стилей, которыми Motion задаёт начальное «скрытое» состояние.
+ * Как только Motion запустился, MotionProvider ставит <html class="motion-ready"> — и страховка отключается.
+ * Если JavaScript выключен совсем, всё видно сразу: см. <noscript> в app/layout.tsx.
+ */
+@keyframes reveal-failsafe { to { opacity: 1; transform: none; filter: none; } }
+@keyframes draw-failsafe { to { stroke-dasharray: none; stroke-dashoffset: 0; } }
+html:not(.motion-ready) [data-reveal] { animation: reveal-failsafe 0.6s ease-out 3.5s forwards; }
+html:not(.motion-ready) .chart-line:not(.chart-line--dash) { animation: reveal-failsafe 0.6s ease-out 3.5s forwards, draw-failsafe 0s linear 3.5s forwards; }
+html:not(.motion-ready) .clock-sweep { animation: reveal-failsafe 0s linear 3.5s forwards; }

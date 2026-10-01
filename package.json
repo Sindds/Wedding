@@ -1,0 +1,48 @@
+{
+  "name": "wedding-rsvp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run test && npm run build",
+    "test:db": "vitest run tests/unit/storage-postgres.test.ts tests/api/routes-postgres.test.ts"
+  },
+  "dependencies": {
+    "@vercel/functions": "^3.9.9",
+    "exceljs": "^3.4.0",
+    "motion": "^13.4.1",
+    "next": "^16.3.6",
+    "pg": "^8.23.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "uuid": "^14.0.2"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "1.56.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^22",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10",
+    "jsdom": "^30.1.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5",
+    "vitest": "^5.0.1"
+  },
+  "overrides": {
+    "playwright-core": "1.56.1"
+  }
+}

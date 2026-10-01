@@ -1,0 +1,105 @@
+/*
+ * Дизайн-система «Звёздная карта — глубокий космос»: primitive → semantic → component.
+ * Все цвета проекта живут только здесь.
+ * Контраст (WCAG 2.x) посчитан по САМОЙ ЯРКОЙ точке Млечного Пути (#694BA2),
+ * потому что фон закреплён и при прокрутке под любым текстом может оказаться ядро полосы:
+ *   --color-text       5.96:1
+ *   --color-text-soft  4.77:1
+ *   --color-accent     4.70:1
+ *   --color-line       3.43:1 (графика, норма 3:1)
+ */
+  :root {
+    /* ── 1. Primitive ─────────────────────────────────────────── */
+    --space-950: #020233;
+    --space-900: #07073C;
+    --space-850: #0B0A42;
+    --space-800: #14124A;
+    --space-700: #232063;
+    --milky-500: #7B5FC9;
+    --frost-50:  #EEF1FF;
+    --frost-200: #D3D8F7;
+    --star-300:  #9DB8FF;
+    --star-warm: #FFE4C4;
+    --gold-300:  #F3D58B;
+    --gold-200:  #F8E2AE;
+    --rose-300:  #FFA3B5;
+    --ink-900:   #141A40;
+    --heart-600: #D92B45;  /* белая «12» на нём 4.79:1 */
+    --white:     #FFFFFF;
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+    --radius-sm:   0.5rem;
+    --radius-md:   0.875rem;
+    --radius-lg:   1.75rem;
+    --radius-pill: 999px;
+
+    /* ── 2. Semantic ──────────────────────────────────────────── */
+    --color-bg:         var(--space-950);
+    --color-text:       var(--frost-50);
+    --color-text-soft:  var(--frost-200);
+    --color-accent:     var(--gold-300);
+    --color-accent-hover: var(--gold-200);
+    --color-on-accent:  var(--ink-900);
+    --color-line:       var(--star-300);
+    --color-star:       var(--frost-50);
+    --color-star-warm:  var(--star-warm);
+    --color-danger:     var(--rose-300);
+    --color-focus:      var(--gold-300);
+    --color-heart:      var(--heart-600);
+    --color-on-heart:   var(--white);
+
+    --sky-gradient:   linear-gradient(180deg, var(--space-900) 0%, var(--space-950) 55%, var(--space-950) 100%);
+    --hairline:       color-mix(in srgb, var(--frost-50) 16%, transparent);
+    --hairline-strong:color-mix(in srgb, var(--frost-50) 34%, transparent);
+    --glass-bg:       color-mix(in srgb, var(--space-850) 72%, transparent);
+    --glass-border:   color-mix(in srgb, var(--frost-50) 18%, transparent);
+    --shadow-panel:   0 1.5rem 3rem -1.5rem color-mix(in srgb, var(--space-950) 90%, transparent);
+    --star-glow:      color-mix(in srgb, var(--star-300) 55%, transparent);
+    --star-glow-warm: color-mix(in srgb, var(--gold-300) 45%, transparent);
+    --moon-bg:        color-mix(in srgb, var(--frost-50) 12%, var(--space-800));
+
+    /* каллиграфия: Great Vibes — имена и заголовки, Bad Script — весь остальной текст (разборчив и мелко) */
+    --font-display: var(--font-great-vibes), 'Segoe Script', cursive;
+    --font-ui:      var(--font-bad-script), 'Segoe Print', cursive;
+
+    /* кегль имён рассчитан по «Дмитрий» в Great Vibes: 3.54 em + росчерк 0.07 em (замер по шрифту) */
+    /* высота окна тоже ограничивает размеры — иначе на широком, но невысоком экране «Марина» уходит за первый экран */
+    --name-size: clamp(3.3rem, min(19vw, 12svh), 8.5rem);
+    --chart-size: min(92vw, 36rem, 50svh);
+
+    /* рукописный шрифт выглядит мельче при том же кегле — шкала крупнее обычной */
+    --text-sm:   clamp(1rem, 0.96rem + 0.2vw, 1.08rem);
+    --text-base: clamp(1.14rem, 1.08rem + 0.3vw, 1.25rem);
+    --text-lg:   clamp(1.28rem, 1.15rem + 0.6vw, 1.55rem);
+    --text-xl:   clamp(1.6rem, 1.35rem + 1.2vw, 2.2rem);
+    --text-2xl:  clamp(3rem, 2.2rem + 3.6vw, 5rem);
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-base: 240ms;
+
+    /* ── 3. Component ─────────────────────────────────────────── */
+    --button-bg:        var(--color-accent);
+    --button-bg-hover:  var(--color-accent-hover);
+    --button-fg:        var(--color-on-accent);
+
+    --chip-bg:          color-mix(in srgb, var(--frost-50) 6%, transparent);
+    --chip-border:      var(--hairline-strong);
+    --chip-bg-selected: var(--frost-50);
+    --chip-fg-selected: var(--color-on-accent);
+
+    --input-bg:           color-mix(in srgb, var(--space-950) 55%, transparent);
+    --input-border:       var(--hairline-strong);
+    --input-border-focus: var(--color-accent);
+
+    --panel-bg:     var(--glass-bg);
+    --panel-border: var(--glass-border);
+    --panel-radius: var(--radius-lg);
+  }
