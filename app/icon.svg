@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<title>Две звезды одного созвездия</title>
+<defs>
+<radialGradient id="sky" cx="30%" cy="22%" r="85%"><stop offset="0" stop-color="#232063"/><stop offset="1" stop-color="#020233"/></radialGradient>
+<linearGradient id="band" x1="0" y1="0" x2="1" y2="1"><stop offset="0.28" stop-color="#7B5FC9" stop-opacity="0"/><stop offset="0.5" stop-color="#7B5FC9" stop-opacity="0.4"/><stop offset="0.72" stop-color="#7B5FC9" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="64" height="64" rx="14" fill="url(#sky)"/>
+<rect width="64" height="64" rx="14" fill="url(#band)"/>
+<path d="M20 43 L45 20" stroke="#9DB8FF" stroke-width="3" stroke-linecap="round"/>
+<circle cx="52" cy="48" r="1.7" fill="#EEF1FF" opacity="0.85"/>
+<circle cx="11" cy="13" r="1.4" fill="#EEF1FF" opacity="0.75"/>
+<path d="M20.00,28.00 L24.05,38.95 L35.00,43.00 L24.05,47.05 L20.00,58.00 L15.95,47.05 L5.00,43.00 L15.95,38.95Z" fill="#F3D58B"/>
+<path d="M45.00,8.50 L48.11,16.89 L56.50,20.00 L48.11,23.11 L45.00,31.50 L41.89,23.11 L33.50,20.00 L41.89,16.89Z" fill="#F8E2AE"/>
+</svg>
